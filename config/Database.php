@@ -15,9 +15,10 @@ class Database
     private string $dbPassword;
     private int $dbPort;
     private ?PDO $pdo = null;
+    private static ?Database $instance = null;
 
 
-    public function __construct()
+    private function __construct()
     {
         $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
         $dotenv->load();
@@ -29,21 +30,26 @@ class Database
         $this->dbPort = $_ENV['DB_PORT'];
     }
 
-
-    public function connect()
+    public static function getInstance(): Database
     {
-
-        if ($this->pdo !== null) {
-            return $this->pdo;
+        if (self::$instance === null) {
+            self::$instance = new Database();
         }
+        return self::$instance;
+    }
 
+
+    public function connect(): PDO
+    {
         try {
-            $this->pdo = new PDO("pgsql:host=$this->dbHost;port=$this->dbPort;dbname=$this->dbName", $this->dbUsername, $this->dbPassword);
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC); // Adiciona o modo de fetch associativo como padrão
+            if ($this->pdo === null) {
+                $this->pdo = new PDO("pgsql:host=$this->dbHost;port=$this->dbPort;dbname=$this->dbName", $this->dbUsername, $this->dbPassword);
+                $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC); // Adiciona o modo de fetch associativo como padrão
+            }
+            return $this->pdo;
         } catch (PDOException $e) {
-            throw new \Exception("Error connection: " . $e->getMessage());
+            throw new \Exception("Database Error connection: " . $e->getMessage());
         }
-        return $this->pdo;
     }
 }

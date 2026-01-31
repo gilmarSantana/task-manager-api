@@ -1,0 +1,22 @@
+{
+    "name": "gilmarsantana/task-manager-api",
+    "description": "RESTful API para gerenciamento de tarefas com autenticação JWT",
+    "type": "project",
+    "require": {
+        "php": "^8.2",
+        "firebase/php-jwt": "^6.0",
+        "vlucas/phpdotenv": "^5.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": ""
+        }
+    },
+    "authors": [
+        {
+            "name": "Gilmar Santana Lins",
+            "email": "gilmar.livecont@gmail.com"
+        }
+    ],
+    "license": "MIT"
+}
